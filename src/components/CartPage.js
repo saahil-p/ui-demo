@@ -29,6 +29,7 @@ const CartPage = ({cartItems, addToCart, getCartCount, getCartTotal, removeFromC
   const handleCheckout = () => {
     //dummy implementation for now
     message.success('Checkout successful!');
+    clearCart(); 
   };
 
   const columns = [
