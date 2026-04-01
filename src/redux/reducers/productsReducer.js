@@ -2,7 +2,7 @@ import {
     FETCH_PRODUCTS_REQUEST,
     FETCH_PRODUCTS_SUCCESS,
     FETCH_PRODUCTS_FAILURE
-} from "../actions/actionTypes"; 
+} from "../constants/actionTypes"; 
 
 const initialState = {
     data : [], 

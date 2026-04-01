@@ -1,11 +1,32 @@
 import { Button, Card, Rate, Space } from 'antd';
 import { MinusOutlined, PlusOutlined, ShoppingCartOutlined } from '@ant-design/icons';
-import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addItem, updateQuantity } from '../../redux/actions/cartActions';
+import { selectProductsQuantity } from '../../redux/selectors/cartSelectors';
+import {
+  handleAddToCart as addToCartHelper,
+  handleIncrementQuantity,
+  handleDecrementQuantity
+} from './helpers/productHelper';
 
 const { Meta } = Card;
 
-const ProductCard = ({ product, onAddToCart, cartQuantity, onIncrement, onDecrement }) => {
+const ProductCard = ({ product }) => {
+  const dispatch = useDispatch();
+  const cartQuantity = useSelector(selectProductsQuantity(product.id));
   const isInCart = cartQuantity > 0;
+
+  const handleAddToCart = () => {
+    addToCartHelper(dispatch, addItem, product);
+  };
+
+  const handleIncrement = () => {
+    handleIncrementQuantity(dispatch, updateQuantity, product.id, cartQuantity);
+  };
+
+  const handleDecrement = () => {
+    handleDecrementQuantity(dispatch, updateQuantity, product.id, cartQuantity);
+  };
 
   return (
     <Card
@@ -24,7 +45,7 @@ const ProductCard = ({ product, onAddToCart, cartQuantity, onIncrement, onDecrem
               type="primary"
               shape="circle"
               icon={<MinusOutlined />}
-              onClick={() => onDecrement(product.id)}
+              onClick={handleDecrement}
               className="quantity-btn"
             />
             <span className="quantity-display">{cartQuantity}</span>
@@ -32,7 +53,7 @@ const ProductCard = ({ product, onAddToCart, cartQuantity, onIncrement, onDecrem
               type="primary"
               shape="circle"
               icon={<PlusOutlined />}
-              onClick={() => onIncrement(product.id)}
+              onClick={handleIncrement}
               className="quantity-btn"
             />
           </div>
@@ -40,7 +61,7 @@ const ProductCard = ({ product, onAddToCart, cartQuantity, onIncrement, onDecrem
           <Button
             type="primary"
             icon={<ShoppingCartOutlined />}
-            onClick={() => onAddToCart(product)}
+            onClick={handleAddToCart}
             className="product-card-add-button"
           >
             Add to Cart

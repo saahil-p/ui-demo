@@ -3,7 +3,7 @@ import {
     REMOVE_ITEM, 
     UPDATE_QUANTITY, 
     CLEAR_CART
-} from "./actionTypes"
+} from "../constants/actionTypes"
 
 
 export const addItem = (product) => ({

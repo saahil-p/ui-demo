@@ -1,59 +1,51 @@
 import {
-    ADD_ITEM, 
-    REMOVE_ITEM, 
-    UPDATE_QUANTITY, 
+    ADD_ITEM,
+    REMOVE_ITEM,
+    UPDATE_QUANTITY,
     CLEAR_CART
-} from "../actions/actionTypes"
+} from "../constants/actionTypes"
+import {
+    addItemToCart,
+    removeItemFromCart,
+    updateItemQuantity
+} from "./helpers/cartHelper";
 
 
 const initialState = {
     items : []
-}; 
+};
 
 
 function cartReducer(state = initialState, action){
     switch(action.type){
-        case ADD_ITEM:{
-            const existingItem = state.items.find(item => item.id === action.payload.id);
-
-            if(existingItem){
-                return{
-                    ...state, 
-                    items: state.items.map(item => item.id === action.payload.id ? {...item, quantity: item.quantity + 1} : item)
-                };
-            }
-            else{
-                return{
-                    ...state, 
-                    items: [...state.items, {...action.payload, quantity: 1}]
-                };
-            }
-        }
+        case ADD_ITEM:
+            return{
+                ...state,
+                items: addItemToCart(state.items, action.payload)
+            };
 
         case REMOVE_ITEM:
             return{
-                ...state, 
-                items: state.items.filter(item => item.id !== action.payload)
+                ...state,
+                items: removeItemFromCart(state.items, action.payload)
             };
 
         case UPDATE_QUANTITY:{
-            const {productId, newQuantity} = action.payload; 
+            const {productId, newQuantity} = action.payload;
 
             return {
-                ...state, 
-
-                items: state.items.map(item => item.id === productId ? {...item, quantity: newQuantity} : item)
+                ...state,
+                items: updateItemQuantity(state.items, productId, newQuantity)
             };
         }
 
-
         case CLEAR_CART:
             return{
-                ...state, 
+                ...state,
                 items: []
             };
 
-        default: 
+        default:
             return state;
 
     }

@@ -1,33 +1,24 @@
-import { Badge, Menu, Input } from 'antd';
+import { Badge, Menu } from 'antd';
 import {
   HomeOutlined,
-  SearchOutlined,
   ShoppingCartOutlined
 } from '@ant-design/icons';
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { selectCartCount } from '../redux/selectors/cartSelectors';
+import { selectCartCount } from '../../redux/selectors/cartSelectors';
 import {useSelector} from 'react-redux';
-
-
-const { Search } = Input;
+import { handleMenuNavigation, navigateToCart } from './helpers/navigationHelper';
 
 const Navbar = () => {
     const navigate = useNavigate();
 
-
     const getCartCount = useSelector(selectCartCount);
 
     const handleMenuClick = (e) => {
-        if (e.key === 'home') {
-            navigate('/products');
-        } else if (e.key === 'cart') {
-            navigate('/cart');
-        }
+        handleMenuNavigation(navigate, e.key);
     };
 
     const handleCartClick = () => {
-        navigate('/cart');
+        navigateToCart(navigate);
     };
 
     return (
