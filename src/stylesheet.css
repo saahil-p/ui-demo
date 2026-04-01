@@ -261,6 +261,15 @@
   color: white;
 }
 
+.loading-spinner-container{
+  text-align: center;
+  padding: 50px; 
+}
+
+.loading-products-error{
+  padding: 20px; 
+}
+
 /* ===== Responsive Styles ===== */
 @media (max-width: 768px) {
   .homepage-content {

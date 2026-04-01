@@ -6,16 +6,21 @@ import {
 } from '@ant-design/icons';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { selectCartCount } from '../redux/selectors/cartSelectors';
+import {useSelector} from 'react-redux';
+
 
 const { Search } = Input;
 
-const Navbar = ({getCartCount}) => {
+const Navbar = () => {
     const navigate = useNavigate();
 
 
+    const getCartCount = useSelector(selectCartCount);
+
     const handleMenuClick = (e) => {
         if (e.key === 'home') {
-            navigate('/');
+            navigate('/products');
         } else if (e.key === 'cart') {
             navigate('/cart');
         }
@@ -48,7 +53,7 @@ const Navbar = ({getCartCount}) => {
 
             <div className="navbar-actions">
 
-                <Badge count={getCartCount()} showZero>
+                <Badge count={getCartCount} showZero>
                     <ShoppingCartOutlined
                         className="navbar-cart-icon"
                         onClick={handleCartClick}

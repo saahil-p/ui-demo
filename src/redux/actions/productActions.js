@@ -77,9 +77,8 @@ const mockFetchProducts = () => {
 
 
 export const fetchProducts = () =>{
-    return async(dispatch) =>{
+    return async (dispatch) =>{
         dispatch(fetchProductsRequest());
-    }
 
     try{
         const products = await mockFetchProducts(); 
@@ -89,4 +88,5 @@ export const fetchProducts = () =>{
     catch(error){
         dispatch(fetchProductsFailure(error));
     }
+};
 }

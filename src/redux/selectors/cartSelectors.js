@@ -4,7 +4,7 @@ export const selectCartCount = (state) => state.cart.items.reduce((total, items)
 
 export const selectCartTotal = (state) => state.cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
 
-export const selectProductQuantity = (productId) => (state) => {
+export const selectProductsQuantity = (productId) => (state) => {
     const item = state.cart.items.find(item => item.id === productId);
     return item ? item.quantity : 0;
 }

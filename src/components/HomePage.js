@@ -1,85 +1,56 @@
-import { Layout, Row, Col, message } from "antd";
+import { Layout, Row, Col, message, Alert, Spin } from "antd";
 import { Footer, Header, Content } from "antd/es/layout/layout";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from './Navbar';
 import ProductCard from './Product';
+import{
+  selectProducts,
+  selectProductsLoading,
+  selectProductsError,
+  selectCartItems
+} from "../redux/selectors/cartSelectors";
+import {addItem, updateQuantity, removeItem} from "../redux/actions/cartActions"
+import {fetchProducts} from "../redux/actions/productActions";
+import {useDispatch, useSelector} from "react-redux";
 
 
-const HomePage = ({cartItems, addToCart, getCartCount, updateQuantity, removeFromCart})=>{
-    const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: 'Wireless Headphones',
-      price: 79.99,
-      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop',
-      description: 'High-quality wireless headphones with noise cancellation',
-      rating: 4.5
-    },
-    {
-      id: 2,
-      name: 'Smart Watch',
-      price: 199.99,
-      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=200&fit=crop',
-      description: 'Feature-rich smartwatch with fitness tracking',
-      rating: 4.7
-    },
-    {
-      id: 3,
-      name: 'Laptop Stand',
-      price: 39.99,
-      image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=300&h=200&fit=crop',
-      description: 'Ergonomic aluminum laptop stand',
-      rating: 4.3
-    },
-    {
-      id: 4,
-      name: 'Mechanical Keyboard',
-      price: 129.99,
-      image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=300&h=200&fit=crop',
-      description: 'RGB mechanical keyboard with custom switches',
-      rating: 4.8
-    },
-    {
-      id: 5,
-      name: 'USB-C Hub',
-      price: 49.99,
-      image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=300&h=200&fit=crop',
-      description: 'Multi-port USB-C hub with HDMI and SD card reader',
-      rating: 4.4
-    },
-    {
-      id: 6,
-      name: 'Wireless Mouse',
-      price: 29.99,
-      image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=300&h=200&fit=crop',
-      description: 'Ergonomic wireless mouse with precision tracking',
-      rating: 4.6
-    }
-  ]);
+const HomePage = ()=>{
+
+  const dispatch = useDispatch();
+
+  const products = useSelector(selectProducts);
+  const loading = useSelector(selectProductsLoading);
+  const error = useSelector(selectProductsError);
+  const cartItems = useSelector(selectCartItems);
+
+  useEffect(() =>{
+    dispatch(fetchProducts());
+  }, [dispatch]);
+
 
   const handleAddToCart = (product) => {
-    addToCart(product);
+    dispatch(addItem(product));
     message.success(`${product.name} added to cart!`);
   };
 
   const getProductQuantityInCart = (productId) => {
-    const cartItem = cartItems.find(item => item.id === productId);
-    return cartItem ? cartItem.quantity : 0;
+    const item = cartItems.find(item => item.id === productId);
+    return item ? item.quantity : 0;
   };
 
   const handleIncrement = (productId) => {
     const currentQuantity = getProductQuantityInCart(productId);
-    updateQuantity(productId, currentQuantity + 1);
+    dispatch(updateQuantity(productId, currentQuantity + 1));
   };
 
   const handleDecrement = (productId) => {
     const currentQuantity = getProductQuantityInCart(productId);
 
     if (currentQuantity === 1) {
-      removeFromCart(productId);
+      dispatch(removeItem(productId));
       message.info('Item removed from cart');
     } else {
-      updateQuantity(productId, currentQuantity - 1);
+      dispatch(updateQuantity(productId, currentQuantity - 1));
     }
   };
 
@@ -87,7 +58,7 @@ const HomePage = ({cartItems, addToCart, getCartCount, updateQuantity, removeFro
   return (
     <Layout className = "homepage-layout">
         <Header className = "homepage-header">
-            <Navbar getCartCount = {getCartCount}/>
+            <Navbar />
         </Header>
 
         <Content className="homepage-content">
@@ -96,6 +67,20 @@ const HomePage = ({cartItems, addToCart, getCartCount, updateQuantity, removeFro
                     Featured Products
                 </h1>
 
+                {loading && (
+                  <div className = "loading-spinner-container">
+                    <Spin className = "loading-spinner" tip = "Loading products....." />
+                  </div>
+                )}
+
+                {error && (
+                  <div className = "loading-products-error">
+                    <Alert message = "Error Loading Products" type = "error" showIcon/>
+                  </div>
+                )}
+
+
+                {!loading && !error && (
                 <Row gutter={[24, 24]}>
                     {products.map(product => (
                         <Col xs={24} sm={12} md={8} lg={6} key={product.id}>
@@ -109,6 +94,7 @@ const HomePage = ({cartItems, addToCart, getCartCount, updateQuantity, removeFro
                         </Col>
                     ))}
                 </Row>
+                )}
             </div>
         </Content>
     </Layout>

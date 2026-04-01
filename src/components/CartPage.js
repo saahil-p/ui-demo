@@ -4,30 +4,46 @@ import { DeleteOutlined, ShoppingOutlined } from '@ant-design/icons';
 import React from 'react';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
+import {useDispatch, useSelector} from "react-redux"; 
+
+import {
+  selectCartItems, 
+  selectCartTotal, 
+  selectCartCount
+} from "../redux/selectors/cartSelectors"; 
+import {removeItem, updateQuantity, clearCart} from "../redux/actions/cartActions";
 
 
-const CartPage = ({cartItems, addToCart, getCartCount, getCartTotal, removeFromCart, updateQuantity, clearCart  }) => {
-  const calculateTotal = (getCartTotal) =>{
-      return getCartTotal();
-  };
+const CartPage = () => {
+
+  const dispatch = useDispatch(); 
+
+  const calculateTotal = useSelector(selectCartTotal); 
+  const cartItems = useSelector(selectCartItems); 
+
+  const getCartTotal = useSelector(selectCartTotal);
+  
+  const getCartCount = useSelector(selectCartCount);
+
 
   const handleRemoveFromCart = (productId) => {
-    removeFromCart(productId);
+    dispatch(removeItem(productId)); 
     message.success('Product removed from cart!');
   };
 
   const handleUpdateQuantity = (productId, newQuantity) => {
-    updateQuantity(productId, newQuantity);
+    dispatch(updateQuantity(productId, newQuantity));
     message.success('Quantity updated!');
   };
 
   const handleClearCart = () => {
-    clearCart();
+    dispatch(clearCart());
     message.success('Cart cleared!');
   };
 
   const handleCheckout = () => {
     //dummy implementation for now
+    dispatch(clearCart()); 
     message.success('Checkout successful!');
   };
 
@@ -93,7 +109,7 @@ const CartPage = ({cartItems, addToCart, getCartCount, getCartTotal, removeFromC
   return (
     <Layout className = "cart-layout">
       <Header className = "cart-header">
-        <Navbar getCartCount={getCartCount} />
+        <Navbar />
       </Header>
 
       <Content className = "cart-content">
@@ -117,7 +133,7 @@ const CartPage = ({cartItems, addToCart, getCartCount, getCartTotal, removeFromC
                   <div className="cart-summary-row">
                     <span>Total:</span>
                     <span className="cart-summary-value">
-                      ${calculateTotal(getCartTotal).toFixed(2)}
+                      ${calculateTotal.toFixed(2)}
                     </span>
                   </div>
                 </div>
