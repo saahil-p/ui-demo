@@ -1,13 +1,15 @@
+import React, { useState } from 'react';
 import { Empty, Layout, Table, Button } from 'antd';
 import { Header, Content } from 'antd/es/layout/layout';
 import Navbar from '../../components/Navabr/Navbar';
 import {useDispatch, useSelector} from "react-redux";
+import CheckoutModal from '../../components/CheckoutModal/CheckoutModal';
 
 import {
   selectCartItems,
   selectCartTotal
 } from "../../redux/selectors/cartSelectors";
-import {removeItem, updateQuantity, clearCart} from "../../redux/actions/cartActions";
+import {removeItem, updateQuantity, clearCart, checkoutAsync} from "../../redux/actions/cartActions";
 import {
   getCartTableColumns,
   formatPrice,
@@ -18,12 +20,26 @@ import {
 
 const CartPage = () => {
 
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const dispatch = useDispatch();
 
   const calculateTotal = useSelector(selectCartTotal);
   const cartItems = useSelector(selectCartItems);
 
   const columns = getCartTableColumns(dispatch, updateQuantity, removeItem);
+
+  const handleConfirmCheckout = async () => {
+    try {
+      await dispatch(checkoutAsync());
+      setShowConfirmModal(false);
+    } catch (error) {
+      console.error('Checkout error:', error);
+    }
+  };
+
+  const handleCancelCheckout = () => {
+    setShowConfirmModal(false);
+  };
   return (
     <Layout className = "cart-layout">
       <Header className = "cart-header">
@@ -69,7 +85,7 @@ const CartPage = () => {
                 <Button
                   type="primary"
                   size="large"
-                  onClick={() => checkoutHelper(dispatch, clearCart)}
+                  onClick={() => checkoutHelper(dispatch, cartItems, setShowConfirmModal)}
                   className="cart-action-button"
                 >
                   Proceed to Checkout
@@ -80,8 +96,15 @@ const CartPage = () => {
         </div>
       </Content>
 
+      <CheckoutModal
+        visible={showConfirmModal}
+        onConfirm={handleConfirmCheckout}
+        onCancel={handleCancelCheckout}
+        expiryTime={300}
+      />
+
     </Layout>
   );
 };
 
-export default CartPage; 
+export default CartPage;

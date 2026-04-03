@@ -3,7 +3,8 @@ import {
     FETCH_PRODUCTS_SUCCESS,
     FETCH_PRODUCTS_FAILURE
 } from "../constants/actionTypes"
-import { mockFetchProducts } from "./helpers/mockProductsHelper";
+// import { mockFetchProducts } from "./helpers/mockProductsHelper";
+import {productService} from "../../api/productService";
 
 export const fetchProductsRequest = () => ({
     type: FETCH_PRODUCTS_REQUEST
@@ -24,8 +25,8 @@ export const fetchProducts = () =>{
         dispatch(fetchProductsRequest());
 
     try{
-        const products = await mockFetchProducts();
 
+        const products = await productService.getAllProducts(); 
         dispatch(fetchProductsSuccess(products));
     }
     catch(error){

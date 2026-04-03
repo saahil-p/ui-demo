@@ -1,29 +1,40 @@
 import { Button, InputNumber, message } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
+import { checkoutAsync, clearCartAsync, removeItemAsync, updateQuantityAsync, reserveForCheckoutAsync } from '../../../redux/actions/cartActions';
 
 export const formatPrice = (price) => {
   return price.toFixed(2);
 };
 
 export const handleRemoveFromCart = (dispatch, removeItem, productId) => {
-  dispatch(removeItem(productId));
+  dispatch(removeItemAsync(productId));
   message.success('Product removed from cart!');
 };
 
 export const handleUpdateQuantity = (dispatch, updateQuantity, productId, newQuantity) => {
-  dispatch(updateQuantity(productId, newQuantity));
+  dispatch(updateQuantityAsync(productId, newQuantity));
   message.success('Quantity updated!');
 };
 
 export const handleClearCart = (dispatch, clearCart) => {
-  dispatch(clearCart());
+  dispatch(clearCartAsync());
   message.success('Cart cleared!');
 };
 
-export const handleCheckout = (dispatch, clearCart) => {
-  //dummy implementation for now
-  dispatch(clearCart());
-  message.success('Checkout successful!');
+export const handleCheckout = async (dispatch, cartItems, setShowConfirmModal) => {
+  try {
+    const items = cartItems.map(item => ({
+      productId: item.id,
+      quantity: item.quantity
+    }));
+
+    await dispatch(reserveForCheckoutAsync(items));
+
+    setShowConfirmModal(true);
+  } catch (error) {
+    message.error('Failed to reserve stock for checkout. Please try again.');
+    console.error('Checkout reservation error:', error);
+  }
 };
 
 export const getCartTableColumns = (dispatch, updateQuantity, removeItem) => {
