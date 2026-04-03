@@ -1,17 +1,25 @@
 import { Badge, Menu } from 'antd';
 import {
   HomeOutlined,
-  ShoppingCartOutlined
+  ShoppingCartOutlined,
+  UnorderedListOutlined
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { selectCartCount } from '../../redux/selectors/cartSelectors';
 import {useSelector} from 'react-redux';
 import { handleMenuNavigation, navigateToCart } from './helpers/navigationHelper';
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const getCartCount = useSelector(selectCartCount);
+
+    // Determine selected key based on current path
+    const getSelectedKey = () => {
+        if (location.pathname === '/orders') return 'orders';
+        return 'home';
+    };
 
     const handleMenuClick = (e) => {
         handleMenuNavigation(navigate, e.key);
@@ -30,7 +38,7 @@ const Navbar = () => {
             <Menu
                 theme="dark"
                 mode="horizontal"
-                defaultSelectedKeys={["home"]}
+                selectedKeys={[getSelectedKey()]}
                 className="navbar-menu"
                 onClick={handleMenuClick}
                 items={[
@@ -38,6 +46,11 @@ const Navbar = () => {
                         key: 'home',
                         icon: <HomeOutlined />,
                         label: 'Home',
+                    },
+                    {
+                        key: 'orders',
+                        icon: <UnorderedListOutlined />,
+                        label: 'Orders',
                     }
                 ]}
             />

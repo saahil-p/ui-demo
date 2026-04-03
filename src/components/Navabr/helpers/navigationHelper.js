@@ -3,6 +3,8 @@ export const handleMenuNavigation = (navigate, menuKey) => {
     navigate('/products');
   } else if (menuKey === 'cart') {
     navigate('/cart');
+  } else if (menuKey === 'orders') {
+    navigate('/orders');
   }
 };
 
