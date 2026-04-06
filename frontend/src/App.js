@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage/HomePage';
 import CartPage from './pages/CartPage/CartPage';
 import OrdersPage from './pages/OrdersPage/OrdersPage';
@@ -13,6 +13,7 @@ function App() {
     <Provider store={store}>
       <Router>
         <Routes>
+          <Route path="/" element={<Navigate to="/products" replace />} />
           <Route path="/products" element={<HomePage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/orders" element={<OrdersPage />} />
