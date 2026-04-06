@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Layout, Empty, Spin, Row, Col, Card } from 'antd';
+import { Layout, Empty, Spin, Row } from 'antd';
 import { Header, Content } from 'antd/es/layout/layout';
 import Navbar from '../../components/Navabr/Navbar';
+import OrderCard from '../../components/Order/OrderCard';
 import { getAllOrders } from '../../api/orderService';
-import { formatDate } from './helpers/ordersPageHelper';
 import "../../stylesheet.css";
 
 const OrdersPage = () => {
@@ -37,12 +37,14 @@ const OrdersPage = () => {
         <div className="products-container">
           <h1 className="products-title">Order History</h1>
 
+          {/* Loading State */}
           {loading && (
             <div className="loading-spinner-container">
               <Spin className="loading-spinner" tip="Loading orders..." />
             </div>
           )}
 
+          {/* Empty State */}
           {!loading && orders.length === 0 && (
             <Empty
               description="No orders found"
@@ -50,40 +52,11 @@ const OrdersPage = () => {
             />
           )}
 
+          {/* Orders Grid */}
           {!loading && orders.length > 0 && (
             <Row gutter={[24, 24]}>
               {orders.map((order) => (
-                <Col xs={24} sm={12} md={8} lg={6} key={order.id}>
-                  <Card className="order-card">
-                    <div className="order-card-header">
-                      <div className="order-info-label">Order #{order.id.substring(0, 8)}</div>
-                      <div className="order-info-label">{formatDate(order.createdAt)}</div>
-                    </div>
-
-                    <div className="order-items-list">
-                      {order.items.map((item, index) => (
-                        <div key={`${order.id}-${item.productId}-${index}`} className="order-item-row">
-                          <img
-                            src={item.imageUrl}
-                            alt={item.name}
-                            className="order-item-thumbnail"
-                          />
-                          <div className="order-item-info">
-                            <div className="order-item-name">{item.name}</div>
-                            <div className="order-item-qty">Qty: {item.quantity}</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="order-card-footer">
-                      <span className={`order-status-badge order-status-${order.status.toLowerCase()}`}>
-                        {order.status}
-                      </span>
-                      <span className="order-total">${order.totalAmount.toFixed(2)}</span>
-                    </div>
-                  </Card>
-                </Col>
+                <OrderCard key={order.id} order={order} />
               ))}
             </Row>
           )}
@@ -94,4 +67,3 @@ const OrdersPage = () => {
 };
 
 export default OrdersPage;
-
